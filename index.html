@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Mongo CURD</title>
+		<!-- Required meta tags -->
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+
+		<!-- Bootstrap CSS v5.2.1 -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT"
+			crossorigin="anonymous"
+		/>
+	</head>
+
+	<body>
+		<header>
+			<!-- place navbar here -->
+			<h1>This is My CURD application</h1>
+		</header>
+		<main>
+			<div class="container">
+				<div class="row">
+					<form action="/addProduct" method="post">
+						<label for="name" class="form-label">Name</label>
+
+						<input
+							type="text"
+							name="name"
+							id="name"
+							placeholder="Enter name"
+							class="form-control"
+						/>
+						<label for="price" class="form-label">Price</label>
+						<input
+							type="text"
+							name="price"
+							id="price"
+							placeholder="Enter price"
+							class="form-control"
+						/>
+
+						<label for="quantity" class="form-label"
+							>Quantity</label
+						>
+						<input
+							type="text"
+							name="quantity"
+							id="quantity"
+							placeholder="Enter quantity"
+							class="form-control"
+						/>
+						<input
+							type="submit"
+							value="Add Product"
+							class="btn btn-primary mt-2"
+						/>
+					</form>
+				</div>
+				<div id="update"></div>
+				<div id="products"></div>
+			</div>
+		</main>
+		<footer>
+			<!-- place footer here -->
+		</footer>
+		<!-- Bootstrap JavaScript Libraries -->
+		<script
+			src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+			integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+			crossorigin="anonymous"
+		></script>
+
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+			integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
+			crossorigin="anonymous"
+		></script>
+		<script>
+			const deleteProduct = (id) => {
+				fetch(`/delete/${id}`, { method: "DELETE" })
+					.then((res) => res.json())
+					.then((data) => console.log(data));
+			};
+			const loadProduct = (id) => {
+				fetch(`/product/${id}`)
+					.then((res) => res.json())
+					.then((data) => {
+						console.log(data._id);
+						const update = document.getElementById("update");
+						update.innerHTML = `
+						<h3>Update: ${data._id}</h3>
+						<label>Price:</label> <input type='text' class='form-control' value='${data.price}' id='price'>
+					<label>Quantity:</label> <input type='text' class='form-control' value='${data.quantity}' id='quantity'>
+						`;
+					});
+			};
+			const loadAllProducts = () => {
+				fetch("/products")
+					.then((response) => response.json())
+					.then((products) => {
+						const container = document.getElementById("products");
+						products.forEach((pd) => {
+							const p = document.createElement("p");
+							p.innerHTML = `<strong>Name:-</strong> ${pd.name} <strong>Price:-</strong> ${pd.price} <strong>Quantity:-</strong> ${pd.quantity}
+							<button class='btn btn-success' onclick="loadProduct('${pd._id}')">Update</button>
+							<button class='btn btn-danger' onclick="deleteProduct('${pd._id}')">Delete</button>
+							`;
+							container.appendChild(p);
+						});
+					});
+			};
+			loadAllProducts();
+		</script>
+	</body>
+</html>
